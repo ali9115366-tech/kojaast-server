@@ -2428,23 +2428,537 @@ app.get('/', async (req, res) => {
 // 🎨 Build Admin Page (از کدت)
 // ============================================
 function buildAdminPage() {
-    // اینجا کد HTML پنل ادمین تو رو قرار بده
-    // (همون buildAdminPage از کد اصلی)
-    // برای کوتاه شدن، به فایل جداگانه منتقلش کن
-    
     return `<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>📍 کجاست؟ — پنل مدیریت 8.0</title>
-<style>body{font-family:Tahoma;background:#0D0D2B;color:#fff;padding:20px;text-align:center;}
-h1{color:#4CAF50;}</style>
+<style>
+:root {
+  --bg-primary: #0D0D2B;
+  --bg-secondary: #1A1A2E;
+  --bg-tertiary: #16213E;
+  --bg-card: #1A1A2E;
+  --text-primary: #E8E8E8;
+  --text-secondary: #B0BEC5;
+  --text-muted: #78909C;
+  --border-color: #2D2D44;
+  --accent-green: #4CAF50;
+  --accent-blue: #2196F3;
+  --accent-orange: #FF9800;
+  --accent-red: #F44336;
+  --accent-purple: #9C27B0;
+  --accent-cyan: #00BCD4;
+  --accent-pink: #E91E63;
+  --accent-yellow: #FFC107;
+  --input-bg: #0D0D2B;
+}
+body.theme-light {
+  --bg-primary: #F5F5F5; --bg-secondary: #FFFFFF; --bg-tertiary: #E8EAF6;
+  --bg-card: #FFFFFF; --text-primary: #212121; --text-secondary: #424242;
+  --text-muted: #757575; --border-color: #E0E0E0; --input-bg: #FAFAFA;
+}
+body.theme-ocean {
+  --bg-primary: #0A1929; --bg-secondary: #0F2233; --bg-tertiary: #132F4C;
+  --bg-card: #0F2233; --text-primary: #B2BAC2; --text-secondary: #8B9DAF;
+  --text-muted: #5C7285; --border-color: #1E4976; --input-bg: #071521;
+}
+body.theme-pink {
+  --bg-primary: #1F0A1A; --bg-secondary: #2D1024; --bg-tertiary: #3D1830;
+  --bg-card: #2D1024; --text-primary: #F8E0EC; --text-secondary: #E0B0C8;
+  --text-muted: #B08098; --border-color: #5A2040; --input-bg: #1A0816;
+}
+body.theme-forest {
+  --bg-primary: #0A1F0F; --bg-secondary: #102A14; --bg-tertiary: #1A3D1E;
+  --bg-card: #102A14; --text-primary: #D0E8D0; --text-secondary: #A0C8A0;
+  --text-muted: #6B8E6B; --border-color: #2A4D2E; --input-bg: #061208;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; transition: background-color 0.3s, color 0.3s, border-color 0.3s; }
+body { font-family: "Vazir", "Segoe UI", Tahoma, sans-serif; background: var(--bg-primary); min-height: 100vh; padding: 12px; direction: rtl; font-size: 13px; color: var(--text-primary); }
+.container { max-width: 100%; margin: 0 auto; }
+.header { background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%); border-radius: 14px; padding: 14px 20px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; border: 1px solid var(--border-color); }
+.header h1 { color: var(--accent-green); font-size: 20px; }
+.header .version { font-size: 12px; color: var(--text-muted); background: var(--bg-primary); padding: 4px 12px; border-radius: 20px; }
+.theme-switcher { display: flex; gap: 3px; background: var(--bg-primary); padding: 3px; border-radius: 20px; }
+.theme-btn { padding: 5px 10px; border: none; border-radius: 16px; cursor: pointer; font-size: 11px; background: transparent; color: var(--text-muted); }
+.theme-btn.active { background: var(--accent-green); color: white; }
+.stats-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin-bottom: 10px; }
+.stat-card { background: var(--bg-card); border-radius: 10px; padding: 10px 14px; border-right: 3px solid var(--accent-green); cursor: pointer; }
+.stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+.stat-card .num { font-size: 20px; font-weight: bold; color: var(--accent-green); }
+.stat-card .lbl { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+.stat-card.blue { border-right-color: var(--accent-blue); } .stat-card.blue .num { color: var(--accent-blue); }
+.stat-card.orange { border-right-color: var(--accent-orange); } .stat-card.orange .num { color: var(--accent-orange); }
+.stat-card.red { border-right-color: var(--accent-red); } .stat-card.red .num { color: var(--accent-red); }
+.usage-banner { background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%); border-radius: 12px; padding: 14px 18px; margin-bottom: 10px; border: 1px solid var(--border-color); }
+.usage-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px; }
+.usage-title { color: var(--accent-blue); font-size: 14px; font-weight: 600; }
+.usage-numbers { display: flex; gap: 16px; font-size: 12px; color: var(--text-secondary); flex-wrap: wrap; }
+.usage-numbers b { color: var(--accent-green); }
+.usage-bar { width: 100%; height: 8px; background: var(--bg-primary); border-radius: 4px; overflow: hidden; }
+.usage-fill { height: 100%; border-radius: 4px; }
+.usage-fill.green { background: linear-gradient(90deg, var(--accent-green), #66BB6A); }
+.main-grid { display: grid; grid-template-columns: 420px 1fr; gap: 10px; align-items: start; }
+@media (max-width: 1100px) { .main-grid { grid-template-columns: 1fr; } }
+.sidebar { display: flex; flex-direction: column; gap: 8px; }
+.capsule { background: var(--bg-card); border-radius: 10px; border: 1px solid var(--border-color); overflow: hidden; }
+.capsule-header { padding: 11px 14px; background: var(--bg-tertiary); cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; font-size: 13px; font-weight: 600; color: var(--accent-orange); }
+.capsule-header:hover { background: var(--bg-secondary); }
+.capsule-header .arrow { transition: transform 0.3s; font-size: 11px; color: var(--text-muted); }
+.capsule.open .capsule-header .arrow { transform: rotate(180deg); }
+.capsule-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease; padding: 0 14px; }
+.capsule.open .capsule-body { max-height: 3000px; padding: 10px 14px 14px; }
+.input-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+.input-row input, .input-row select { flex: 1; min-width: 80px; padding: 7px 10px; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-size: 12px; outline: none; font-family: inherit; }
+.input-row input:focus { border-color: var(--accent-green); }
+.btn { padding: 7px 14px; border: none; border-radius: 6px; cursor: pointer; color: white; font-size: 12px; font-weight: 500; font-family: inherit; white-space: nowrap; }
+.btn:hover { transform: translateY(-1px); opacity: 0.9; }
+.btn-primary { background: var(--accent-blue); }
+.btn-danger { background: var(--accent-red); }
+.btn-success { background: var(--accent-green); }
+.btn-warning { background: var(--accent-orange); }
+.btn-gray { background: #607D8B; }
+.btn-dark { background: #B71C1C; }
+.btn-purple { background: var(--accent-purple); }
+.btn-cyan { background: var(--accent-cyan); }
+.btn-pink { background: var(--accent-pink); }
+.btn-xs { padding: 5px 9px; font-size: 12px; }
+.result-box { margin-top: 6px; padding: 8px 12px; background: var(--input-bg); border-radius: 6px; display: none; color: var(--text-primary); font-size: 12px; line-height: 1.7; border: 1px solid var(--border-color); max-height: 400px; overflow-y: auto; }
+.users-panel { background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; }
+.users-panel-header { padding: 12px 16px; background: var(--bg-tertiary); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+.users-panel-header h2 { color: var(--accent-green); font-size: 15px; }
+.filter-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; padding: 10px 14px; background: var(--bg-primary); border-bottom: 1px solid var(--border-color); }
+.chip { padding: 6px 14px; background: var(--bg-card); border-radius: 18px; font-size: 12px; color: var(--text-secondary); cursor: pointer; border: 1px solid var(--border-color); }
+.chip.active { background: var(--accent-green); color: white; border-color: var(--accent-green); }
+.chip.active.red { background: var(--accent-red); border-color: var(--accent-red); }
+.chip.active.orange { background: var(--accent-orange); border-color: var(--accent-orange); }
+.chip.active.purple { background: var(--accent-purple); border-color: var(--accent-purple); }
+.chip.active.gray { background: #607D8B; border-color: #607D8B; }
+.search-input { padding: 7px 12px; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-size: 12px; flex: 1; min-width: 150px; outline: none; }
+.table-wrapper { overflow-x: auto; max-height: 80vh; overflow-y: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+thead { position: sticky; top: 0; background: var(--bg-tertiary); z-index: 10; }
+th { padding: 10px 8px; text-align: right; color: var(--text-muted); font-weight: 600; font-size: 11px; border-bottom: 2px solid var(--border-color); white-space: nowrap; }
+td { padding: 8px; border-bottom: 1px solid var(--border-color); color: var(--text-primary); vertical-align: middle; }
+tr:hover { background: var(--bg-tertiary); }
+tr.force { background: rgba(244,67,54,0.15); }
+tr.update { background: rgba(255,152,0,0.1); }
+tr.blocked { background: rgba(244,67,54,0.1); opacity: 0.8; }
+.badge { display: inline-block; padding: 3px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; margin: 1px; white-space: nowrap; }
+.badge-green { background: rgba(76,175,80,0.2); color: var(--accent-green); }
+.badge-red { background: rgba(244,67,54,0.2); color: var(--accent-red); }
+.badge-orange { background: rgba(255,152,0,0.2); color: var(--accent-orange); }
+.badge-blue { background: rgba(33,150,243,0.2); color: var(--accent-blue); }
+.badge-purple { background: rgba(156,39,176,0.2); color: var(--accent-purple); }
+.badge-pink { background: rgba(233,30,99,0.2); color: var(--accent-pink); }
+.badge-gray { background: rgba(158,158,158,0.2); color: var(--text-muted); }
+.badge-yellow { background: rgba(255,193,7,0.2); color: var(--accent-yellow); }
+.action-cell { display: flex; gap: 4px; flex-wrap: wrap; max-width: 220px; }
+.footer { text-align: center; color: var(--text-muted); font-size: 11px; margin-top: 12px; padding: 10px; }
+.empty { text-align: center; padding: 40px; color: var(--text-muted); }
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 999; display: none; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.show { display: flex; }
+.modal { background: var(--bg-card); border-radius: 16px; padding: 20px; max-width: 700px; width: 100%; border: 1px solid var(--border-color); max-height: 85vh; overflow-y: auto; }
+.modal h3 { color: var(--accent-green); margin-bottom: 14px; font-size: 16px; }
+.modal-actions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.info-item { background: var(--bg-primary); padding: 8px 12px; border-radius: 8px; }
+.info-item .label { font-size: 10px; color: var(--text-muted); margin-bottom: 2px; }
+.info-item .value { font-size: 12px; color: var(--text-primary); font-weight: 500; word-break: break-all; }
+.toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--bg-card); color: var(--text-primary); padding: 12px 24px; border-radius: 10px; border: 1px solid var(--border-color); box-shadow: 0 8px 24px rgba(0,0,0,0.4); z-index: 9999; opacity: 0; transition: opacity 0.3s; font-size: 13px; }
+.toast.show { opacity: 1; }
+.help-box { background: var(--input-bg); border-right: 3px solid var(--accent-cyan); padding: 8px 12px; border-radius: 6px; font-size: 11px; color: var(--text-secondary); margin-bottom: 8px; line-height: 1.8; }
+.message-card { background: var(--bg-primary); border-radius: 10px; padding: 12px; margin: 8px 0; border: 1px solid var(--border-color); border-right: 4px solid var(--accent-pink); }
+.message-card.unread { border-right-color: var(--accent-orange); background: rgba(255,152,0,0.08); }
+.message-card.read { border-right-color: var(--accent-green); }
+.message-card .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px; }
+.message-card .phone { font-family: monospace; color: var(--accent-blue); font-weight: 600; font-size: 13px; cursor: pointer; }
+.message-card .time { color: var(--text-muted); font-size: 11px; }
+.message-card .body { color: var(--text-primary); font-size: 12px; line-height: 1.8; background: var(--bg-secondary); padding: 10px 12px; border-radius: 8px; margin-top: 6px; white-space: pre-wrap; word-break: break-word; }
+</style>
 </head>
-<body>
-<h1>📍 کجاست؟ — پنل مدیریت</h1>
-<p>سرور با موفقیت روی Render اجرا شد!</p>
-<p>برای دیدن پنل کامل، کد HTML اصلی رو در اینجا قرار بده.</p>
-<p style="color:#FF9800;">✅ سرور متصل است</p>
+<body class="theme-dark">
+<div class="container">
+
+<div class="header">
+<h1>📍 کجاست؟ <span style="font-size:12px;color:var(--text-muted);font-weight:normal;">پنل مدیریت 8.0</span></h1>
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+<div class="theme-switcher">
+<button class="theme-btn active" onclick="setTheme('dark', event)">🌙</button>
+<button class="theme-btn" onclick="setTheme('light', event)">☀️</button>
+<button class="theme-btn" onclick="setTheme('ocean', event)">🌊</button>
+<button class="theme-btn" onclick="setTheme('pink', event)">🌸</button>
+<button class="theme-btn" onclick="setTheme('forest', event)">🌲</button>
+</div>
+<span class="version" id="lastUpdate">—</span>
+<button class="btn btn-primary btn-xs" onclick="pingServer()">📡 Ping</button>
+<button class="btn btn-success btn-xs" onclick="loadData()">🔄 بروزرسانی</button>
+</div>
+</div>
+
+<div class="help-box">
+💡 <b>راهنما:</b> برای دیدن جزئیات هر کاربر روی 📋 کلیک کنید.
+</div>
+
+<div class="usage-banner">
+<div class="usage-header">
+<div class="usage-title">📊 مصرف سرور امروز</div>
+<div class="usage-numbers">
+<span>مصرف: <b id="usageToday">—</b></span>
+<span>باقی‌مانده: <b id="usageRemaining">—</b></span>
+</div>
+</div>
+<div class="usage-bar"><div class="usage-fill green" id="usageFill" style="width:0%"></div></div>
+</div>
+
+<div class="stats-bar">
+<div class="stat-card" onclick="setFilter('all')"><div class="num" id="statUsers">—</div><div class="lbl">👥 کاربران</div></div>
+<div class="stat-card blue" onclick="setFilter('verified')"><div class="num" id="statVerified">—</div><div class="lbl">✅ تأیید</div></div>
+<div class="stat-card red" onclick="setFilter('blocked')"><div class="num" id="statBlocked">—</div><div class="lbl">🚫 بلاک</div></div>
+<div class="stat-card orange" onclick="setFilter('update')"><div class="num" id="statUpdate">—</div><div class="lbl">🔄 آپدیت</div></div>
+<div class="stat-card red" onclick="setFilter('force')"><div class="num" id="statForce">—</div><div class="lbl">⚠️ اجباری</div></div>
+</div>
+
+<div class="main-grid">
+
+<div class="sidebar">
+
+<div class="capsule" id="cap-nuke" style="border-color:var(--accent-red);">
+<div class="capsule-header" onclick="toggleCapsule('cap-nuke')" style="background:linear-gradient(135deg,#B71C1C,#D32F2F);color:#fff;"><span>💥 ریست کامل سرور</span><span class="arrow">▼</span></div>
+<div class="capsule-body">
+<input type="text" id="nukeConfirm" class="search-input" placeholder="YES_NUCLEAR_RESET" style="width:100%;margin-bottom:8px;border-color:var(--accent-red);">
+<button class="btn btn-dark" onclick="nuclearResetAll()" style="width:100%;padding:12px;font-weight:bold;">💥 پاک‌سازی کامل</button>
+<div id="nukeResult" class="result-box"></div>
+</div></div>
+
+<div class="capsule" id="cap-msg">
+<div class="capsule-header" onclick="toggleCapsule('cap-msg')"><span>📨 ارسال پیام سفارشی</span><span class="arrow">▼</span></div>
+<div class="capsule-body">
+<div class="input-row">
+<input type="text" id="msgPhone" placeholder="شماره...">
+<input type="text" id="msgSender" placeholder="فرستنده (اختیاری)">
+</div>
+<input type="text" id="msgText" class="search-input" placeholder="متن پیام..." style="width:100%;margin-bottom:6px;">
+<button class="btn btn-pink" onclick="sendCustomMessage()" style="width:100%;">📨 ارسال پیام</button>
+<div id="msgResult" class="result-box"></div>
+</div></div>
+
+<div class="capsule" id="cap-version">
+<div class="capsule-header" onclick="toggleCapsule('cap-version')"><span>📱 انتشار نسخه جدید</span><span class="arrow">▼</span></div>
+<div class="capsule-body">
+<div class="input-row">
+<input type="text" id="newVersionName" placeholder="نام نسخه" value="1.0.1">
+<input type="number" id="newVersionCode" placeholder="کد" value="2">
+</div>
+<input type="text" id="newDownloadUrl" class="search-input" placeholder="لینک دانلود" style="width:100%;margin-bottom:6px;">
+<div class="input-row">
+<input type="text" id="newReleaseNotes" placeholder="توضیحات" style="flex:2;">
+<input type="text" id="customMessage" placeholder="پیام سفارشی">
+</div>
+<button class="btn btn-warning" onclick="publishNewVersion()" style="width:100%;">📤 انتشار</button>
+<div id="publishResult" class="result-box"></div>
+</div></div>
+
+</div>
+
+<div class="users-panel">
+<div class="users-panel-header">
+<h2>📋 لیست کاربران (<span id="userCount">0</span>)</h2>
+<button class="btn btn-success btn-xs" onclick="exportCSV()">📥 CSV</button>
+</div>
+<div class="filter-row">
+<input type="text" id="searchInput" class="search-input" placeholder="🔍 جستجو...">
+<div class="chip active" data-filter="all" onclick="setFilter('all')">👥 همه</div>
+<div class="chip" data-filter="verified" onclick="setFilter('verified')">✅ تأیید</div>
+<div class="chip" data-filter="blocked" onclick="setFilter('blocked')">🚫 بلاک</div>
+<div class="chip" data-filter="update" onclick="setFilter('update')">🔄 آپدیت</div>
+<div class="chip" data-filter="force" onclick="setFilter('force')">⚠️ اجباری</div>
+</div>
+<div class="table-wrapper"><table>
+<thead><tr>
+<th>#</th><th>👤 نام</th><th>📱 شماره</th><th>🎯 هدف</th>
+<th>✅ وضعیت</th><th>📊 محدودیت</th><th>📍 موقعیت</th>
+<th>🔢 نسخه</th><th>🔧 عملیات</th>
+</tr></thead>
+<tbody id="usersTableBody"></tbody>
+</table></div>
+</div>
+
+</div>
+
+<div class="modal-overlay" id="modal-details">
+<div class="modal">
+<h3>👤 جزئیات کامل کاربر</h3>
+<div id="userDetailsContent"></div>
+<div class="modal-actions"><button class="btn btn-gray" onclick="closeModal('modal-details')">بستن</button></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+<div class="footer">● سرور فعال | پنل 8.0 — Render</div>
+</div>
+
+<script>
+var SECRET_KEY = "kojaast-admin-key-1403";
+var API_BASE = window.location.origin;
+var allUsers = [];
+var currentFilter = "all";
+var searchQuery = "";
+var currentTheme = localStorage.getItem("kojaast-theme") || "dark";
+
+function setTheme(theme, ev) {
+  document.body.className = "theme-" + theme;
+  currentTheme = theme;
+  localStorage.setItem("kojaast-theme", theme);
+  document.querySelectorAll(".theme-btn").forEach(b => b.classList.remove("active"));
+  if (ev && ev.target) ev.target.classList.add("active");
+}
+
+function showToast(msg, duration) {
+  var t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), duration || 3000);
+}
+
+function toggleCapsule(id) {
+  var el = document.getElementById(id);
+  if (el) el.classList.toggle("open");
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll(".chip").forEach(c => {
+    if (c.getAttribute("data-filter") === f) {
+      c.classList.add("active");
+      if (f === "blocked" || f === "force") c.classList.add("red");
+      if (f === "update") c.classList.add("orange");
+    } else {
+      c.classList.remove("active", "red", "orange");
+    }
+  });
+  renderUsers();
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove("show"); }
+
+document.getElementById("searchInput").addEventListener("input", function(e) {
+  searchQuery = e.target.value.trim().toLowerCase();
+  renderUsers();
+});
+
+async function loadData() {
+  try {
+    var res = await fetch(API_BASE + "/api/users?adminKey=" + SECRET_KEY);
+    var data = await res.json();
+    if (!data.success) { showToast("❌ خطا: " + data.message); return; }
+    allUsers = data.users || [];
+    document.getElementById("lastUpdate").textContent = "🕐 " + new Date().toLocaleTimeString("fa-IR");
+    updateStats(data.stats);
+    updateUsage(data.serverUsage);
+    renderUsers();
+  } catch (e) { showToast("❌ " + e.message); }
+}
+
+function updateUsage(usage) {
+  if (!usage) return;
+  document.getElementById("usageToday").textContent = usage.today.toLocaleString("fa-IR");
+  document.getElementById("usageRemaining").textContent = usage.remaining.toLocaleString("fa-IR");
+}
+
+function updateStats(stats) {
+  var verified = 0, blocked = 0, needsUpd = 0, forceUpd = 0;
+  allUsers.forEach(u => {
+    if (u.isVerified) verified++;
+    if (u.isBlocked) blocked++;
+    if (u.needsUpdate) needsUpd++;
+    if (u.isForceUpdate) forceUpd++;
+  });
+  document.getElementById("statUsers").textContent = allUsers.length;
+  document.getElementById("statVerified").textContent = verified;
+  document.getElementById("statBlocked").textContent = blocked;
+  document.getElementById("statUpdate").textContent = needsUpd;
+  document.getElementById("statForce").textContent = forceUpd;
+  document.getElementById("userCount").textContent = allUsers.length;
+}
+
+function renderUsers() {
+  var list = allUsers.slice();
+  if (currentFilter === "verified") list = list.filter(u => u.isVerified);
+  else if (currentFilter === "blocked") list = list.filter(u => u.isBlocked);
+  else if (currentFilter === "update") list = list.filter(u => u.needsUpdate);
+  else if (currentFilter === "force") list = list.filter(u => u.isForceUpdate);
+  
+  if (searchQuery) {
+    list = list.filter(u => 
+      (u.phone && u.phone.indexOf(searchQuery) !== -1) ||
+      (u.name && u.name.toLowerCase().indexOf(searchQuery) !== -1)
+    );
+  }
+  
+  var tbody = document.getElementById("usersTableBody");
+  if (list.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="9" class="empty">❌ کاربری یافت نشد</td></tr>';
+    return;
+  }
+  var html = "";
+  for (var i=0; i<list.length; i++) {
+    var u = list[i];
+    var rowClass = u.isForceUpdate ? "force" : (u.needsUpdate ? "update" : (u.isBlocked ? "blocked" : ""));
+    var verifiedBadge = u.isVerified ? '<span class="badge badge-green">✅</span>' : '<span class="badge badge-orange">⏳</span>';
+    var blockedBadge = u.isBlocked ? '<span class="badge badge-red">🚫</span>' : "";
+    var updateBadge = u.isForceUpdate ? '<span class="badge badge-red">⚠️</span>' :
+                      u.needsUpdate ? '<span class="badge badge-orange">🔄</span>' :
+                      '<span class="badge badge-green">✅</span>';
+    html += '<tr class="' + rowClass + '">';
+    html += '<td>' + (i+1) + '</td>';
+    html += '<td>' + (u.name || "ناشناس") + '</td>';
+    html += '<td style="font-family:monospace;color:var(--accent-blue);">' + u.phone + '</td>';
+    html += '<td style="font-family:monospace;font-size:11px;">' + (u.targetPhone || "—") + '</td>';
+    html += '<td>' + verifiedBadge + blockedBadge + updateBadge + '</td>';
+    html += '<td>' + u.dailySent + '/' + u.dailyLimit + '</td>';
+    html += '<td><span class="badge badge-blue">📍 ' + (u.totalLocations || 0) + '</span></td>';
+    html += '<td><span class="badge badge-purple">' + (u.appVersion || "—") + '</span></td>';
+    html += '<td><div class="action-cell">';
+    html += '<button class="btn btn-primary btn-xs" onclick="showUserDetails(\\'' + u.phone + '\\')">📋</button>';
+    html += '<button class="btn btn-pink btn-xs" onclick="openMsgModal(\\'' + u.phone + '\\')">📨</button>';
+    html += '<button class="btn btn-gray btn-xs" onclick="toggleForce(\\'' + u.phone + '\\')">⚠️</button>';
+    html += '<button class="btn btn-success btn-xs" onclick="toggleVerify(\\'' + u.phone + '\\')">' + (u.isVerified ? "❌" : "✅") + '</button>';
+    html += '<button class="btn ' + (u.isBlocked ? "btn-success" : "btn-danger") + ' btn-xs" onclick="toggleBlock(\\'' + u.phone + '\\')">' + (u.isBlocked ? "🔓" : "🚫") + '</button>';
+    html += '<button class="btn btn-dark btn-xs" onclick="nukeSingle(\\'' + u.phone + '\\')">💥</button>';
+    html += '</div></td></tr>';
+  }
+  tbody.innerHTML = html;
+}
+
+window.showUserDetails = async function(phone) {
+  document.getElementById("modal-details").classList.add("show");
+  document.getElementById("userDetailsContent").innerHTML = "⏳ در حال بارگذاری...";
+  try {
+    var res = await fetch(API_BASE + "/api/get-user-details?phone=" + encodeURIComponent(phone) + "&adminKey=" + SECRET_KEY);
+    var data = await res.json();
+    if (!data.success) { document.getElementById("userDetailsContent").innerHTML = "❌ " + data.message; return; }
+    var u = data.user;
+    var html = '<div class="info-grid">';
+    html += '<div class="info-item"><div class="label">👤 نام</div><div class="value">' + (u.name || "—") + '</div></div>';
+    html += '<div class="info-item"><div class="label">📱 شماره</div><div class="value">' + u.phone + '</div></div>';
+    html += '<div class="info-item"><div class="label">📧 ایمیل</div><div class="value">' + (u.email || "—") + '</div></div>';
+    html += '<div class="info-item"><div class="label">🎯 هدف</div><div class="value">' + (u.targetPhone || "—") + '</div></div>';
+    html += '<div class="info-item"><div class="label">✅ تأیید</div><div class="value">' + (u.isVerified ? "بله" : "خیر") + '</div></div>';
+    html += '<div class="info-item"><div class="label">📅 ثبت‌نام</div><div class="value">' + u.registeredAtFa + '</div></div>';
+    html += '<div class="info-item"><div class="label">🕐 آخرین</div><div class="value">' + u.lastSeenFa + '</div></div>';
+    html += '<div class="info-item"><div class="label">📍 موقعیت‌ها</div><div class="value">' + u.totalLocations + '</div></div>';
+    html += '</div>';
+    document.getElementById("userDetailsContent").innerHTML = html;
+  } catch (e) { document.getElementById("userDetailsContent").innerHTML = "❌ " + e.message; }
+};
+
+window.toggleForce = function(phone) {
+  fetch(API_BASE + "/api/toggle-force", { 
+    method: "POST", headers: { "Content-Type": "application/json" }, 
+    body: JSON.stringify({ phone, adminKey: SECRET_KEY }) 
+  }).then(r => r.json()).then(result => { showToast(result.message); if (result.success) loadData(); });
+};
+
+window.toggleVerify = function(phone) {
+  fetch(API_BASE + "/api/toggle-verify", { 
+    method: "POST", headers: { "Content-Type": "application/json" }, 
+    body: JSON.stringify({ phone, adminKey: SECRET_KEY }) 
+  }).then(r => r.json()).then(result => { showToast(result.message); if (result.success) loadData(); });
+};
+
+window.toggleBlock = function(phone) {
+  var u = allUsers.find(x => x.phone === phone);
+  var endpoint = (u && u.isBlocked) ? "/api/unblock-user" : "/api/block-user";
+  fetch(API_BASE + endpoint, { 
+    method: "POST", headers: { "Content-Type": "application/json" }, 
+    body: JSON.stringify({ phone, adminKey: SECRET_KEY }) 
+  }).then(r => r.json()).then(result => { showToast(result.message); if (result.success) loadData(); });
+};
+
+window.nukeSingle = function(phone) {
+  if (!confirm("💥 تمام اطلاعات " + phone + " پاک می‌شود!")) return;
+  fetch(API_BASE + "/api/nuke-user", { 
+    method: "DELETE", headers: { "Content-Type": "application/json" }, 
+    body: JSON.stringify({ phone, adminKey: SECRET_KEY }) 
+  }).then(r => r.json()).then(result => { 
+    if (result.success) { showToast("💥 حذف شد"); loadData(); } 
+    else showToast("❌ " + result.message); 
+  });
+};
+
+window.sendCustomMessage = function() {
+  var phone = document.getElementById("msgPhone").value.trim();
+  var message = document.getElementById("msgText").value.trim();
+  var sender = document.getElementById("msgSender").value.trim() || "مدیریت";
+  if (!phone || !message) { alert("⚠️ شماره و پیام الزامی"); return; }
+  fetch(API_BASE + "/api/send-custom-message", { 
+    method: "POST", headers: { "Content-Type": "application/json" }, 
+    body: JSON.stringify({ phone, message, sender, adminKey: SECRET_KEY }) 
+  }).then(r => r.json()).then(result => { 
+    document.getElementById("msgResult").style.display = "block";
+    document.getElementById("msgResult").textContent = result.message;
+    if (result.success) document.getElementById("msgText").value = "";
+  });
+};
+
+window.openMsgModal = function(phone) {
+  document.getElementById("msgPhone").value = phone;
+  document.getElementById("cap-msg").classList.add("open");
+  document.getElementById("msgText").focus();
+};
+
+window.nuclearResetAll = async function() {
+  var txt = document.getElementById("nukeConfirm").value.trim();
+  if (txt !== "YES_NUCLEAR_RESET") { alert("⚠️ عبارت YES_NUCLEAR_RESET را وارد کنید"); return; }
+  if (!confirm("💥💥💥 هشدار! تمام داده‌ها پاک می‌شوند!")) return;
+  try {
+    var res = await fetch(API_BASE + "/api/nuclear-reset", {
+      method: "DELETE", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ adminKey: SECRET_KEY, confirm: "YES_NUCLEAR_RESET" })
+    });
+    var data = await res.json();
+    document.getElementById("nukeResult").style.display = "block";
+    document.getElementById("nukeResult").textContent = data.message;
+    setTimeout(loadData, 2000);
+  } catch (e) { alert("❌ " + e.message); }
+};
+
+window.publishNewVersion = function() {
+  var name = document.getElementById("newVersionName").value.trim();
+  var code = parseInt(document.getElementById("newVersionCode").value);
+  var dl = document.getElementById("newDownloadUrl").value.trim();
+  var notes = document.getElementById("newReleaseNotes").value.trim();
+  var msg = document.getElementById("customMessage").value.trim();
+  if (!name || !code) { alert("⚠️ نام و کد الزامی"); return; }
+  fetch(API_BASE + "/api/set-app-version", { 
+    method: "POST", headers: { "Content-Type": "application/json" }, 
+    body: JSON.stringify({ versionName: name, versionCode: code, downloadUrl: dl, releaseNotes: notes, customMessage: msg, isForAllUsers: true, adminKey: SECRET_KEY }) 
+  }).then(r => r.json()).then(result => { 
+    document.getElementById("publishResult").style.display = "block";
+    document.getElementById("publishResult").textContent = result.message;
+  });
+};
+
+window.pingServer = async function() {
+  var start = Date.now();
+  try {
+    var res = await fetch(API_BASE + "/api/ping");
+    var data = await res.json();
+    var ms = Date.now() - start;
+    showToast("📡 Pong! " + ms + "ms • نسخه " + data.version);
+  } catch (e) { showToast("❌ " + e.message); }
+};
+
+window.exportCSV = function() {
+  window.open(API_BASE + "/api/export-csv?adminKey=" + SECRET_KEY, "_blank");
+};
+
+document.body.className = "theme-" + currentTheme;
+loadData();
+setInterval(loadData, 30000);
+console.log("✅ پنل 8.0 بارگذاری شد");
+</script>
 </body>
 </html>`;
 }
